@@ -1,4 +1,12 @@
-export const MovieCard = ({ movie }) => {
+import type { FunctionComponent } from 'react'
+
+interface IMovieCardProps {
+  movie: IMovie
+}
+
+export const MovieCard: FunctionComponent<IMovieCardProps> = ({
+  movie,
+}: IMovieCardProps) => {
   const { title, vote_average, poster_path, release_date, original_language } =
     movie
   return (

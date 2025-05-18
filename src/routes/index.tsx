@@ -7,10 +7,6 @@ import { Search } from '@/components/Search'
 import { MovieCard } from '@/components/MovieCard'
 import { Spinner } from '@/components/Spinner'
 
-export const Route = createFileRoute('/')({
-  component: App,
-})
-
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -20,7 +16,7 @@ const App = () => {
 
   useDebounce(() => setDebouncedSearchTerm(searchTerm), 300, [searchTerm])
 
-  const { data, isFetching, error, refetch } = useQuery({
+  const { data, isFetching, error, refetch } = useQuery<IMovieResponse>({
     queryKey: ['movies'],
     queryFn: async () => {
       const endpoint = debouncedSearchTerm
@@ -41,8 +37,6 @@ const App = () => {
     refetch()
   }, [debouncedSearchTerm])
 
-  console.log('resp', data)
-
   return (
     <main>
       <div className="pattern">
@@ -58,17 +52,18 @@ const App = () => {
           <section className="trending">
             <h2>Trending Movies</h2>
             <ul>
-              {data.results.map((eachMovie, eachindex) => {
-                return (
-                  <li key={eachMovie.id}>
-                    <p>{eachindex + 1}</p>
-                    <img
-                      src={`https://image.tmdb.org/t/p/w500/${eachMovie.poster_path}`}
-                      alt={eachMovie.title}
-                    />
-                  </li>
-                )
-              })}
+              {data &&
+                data.results.map((eachMovie, eachindex) => {
+                  return (
+                    <li key={eachMovie.id}>
+                      <p>{eachindex + 1}</p>
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500/${eachMovie.poster_path}`}
+                        alt={eachMovie.title}
+                      />
+                    </li>
+                  )
+                })}
             </ul>
           </section>
           <section className="all-movies">
@@ -79,9 +74,10 @@ const App = () => {
               <p className="text-red-500">{error.message}</p>
             ) : (
               <ul>
-                {data.results.map((eachMovie, eachIndex) => {
-                  return <MovieCard key={eachMovie.id} movie={eachMovie} />
-                })}
+                {data &&
+                  data.results.map((eachMovie) => {
+                    return <MovieCard key={eachMovie.id} movie={eachMovie} />
+                  })}
               </ul>
             )}
           </section>
@@ -90,3 +86,7 @@ const App = () => {
     </main>
   )
 }
+
+export const Route = createFileRoute('/')({
+  component: App,
+})
