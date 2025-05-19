@@ -1,25 +1,25 @@
-import type { FunctionComponent } from 'react'
+import type { FunctionComponent } from "react";
 
 interface ISearchProps {
-  searchTerm: string
-  setSearchTerm: (search: string) => void
+	searchTerm: string;
+	setSearchTerm: (search: string) => void;
 }
 
 export const Search: FunctionComponent<ISearchProps> = ({
-  searchTerm,
-  setSearchTerm,
+	searchTerm,
+	setSearchTerm,
 }: ISearchProps) => {
-  return (
-    <div className="search">
-      <div>
-        <img src="search.svg" alt="search" />
-        <input
-          type="text"
-          placeholder="Search through thousands of movies"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-    </div>
-  )
-}
+	return (
+		<div className="search">
+			<div>
+				<img src="search.svg" alt="search" />
+				<input
+					type="text"
+					placeholder="Search through thousands of movies"
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+				/>
+			</div>
+		</div>
+	);
+};
