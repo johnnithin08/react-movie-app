@@ -19,3 +19,35 @@ declare interface IMovieResponse {
 	page: number;
 	results: Array<IMovie>;
 }
+
+declare interface Genre {
+	id: number;
+	name: string;
+}
+declare interface Creator {
+	id: number;
+	name: string;
+	job?: string;
+}
+declare interface Cast {
+	id: number;
+	name: string;
+	character: string;
+	profile_path: string | null;
+}
+declare interface Company {
+	id: number;
+	name: string;
+	logo_path: string | null;
+}
+declare interface Provider {
+	provider_name: string;
+	logo_path: string;
+}
+declare interface Recommendation {
+	id: number;
+	title?: string;
+	name?: string;
+	poster_path: string | null;
+	vote_average: number;
+}

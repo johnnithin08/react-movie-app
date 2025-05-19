@@ -6,13 +6,11 @@ import { useState } from "react";
 import { MovieCard } from "@/components/MovieCard";
 import { Search } from "@/components/Search";
 import { Spinner } from "@/components/Spinner";
-import { tmdbEndpoints, getImageUrl, type MovieResponse } from "@/lib/tmdb";
-import { CircularRating } from "@/components/CircularRating";
+import { tmdbEndpoints, type MovieResponse } from "@/lib/tmdb";
 import { TrendingSection } from "@/components/TrendingSection";
 import { TrailerSection } from "@/components/TrailerSection";
 
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-const TMDB_API_BASE = "https://api.themoviedb.org/3";
 
 const fetchMovies = async (endpoint: string) => {
 	const response = await fetch(endpoint, {

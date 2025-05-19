@@ -1,10 +1,32 @@
 import { CircularRating } from "@/components/CircularRating";
-import { getImageUrl, MovieResponse } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 interface TrendingSectionProps {
 	trendingPeriod: "day" | "week";
 	setTrendingPeriod: (period: "day" | "week") => void;
+}
+
+// Define types for Movie and TV
+interface TrendingMovie {
+	id: number;
+	poster_path: string | null;
+	title: string;
+	vote_average: number;
+	release_date: string;
+}
+interface TrendingTV {
+	id: number;
+	poster_path: string | null;
+	name: string;
+	vote_average: number;
+	first_air_date: string;
+}
+type TrendingItem = TrendingMovie | TrendingTV;
+
+function isTV(item: TrendingItem): item is TrendingTV {
+	return (item as TrendingTV).name !== undefined;
 }
 
 export function TrendingSection({
@@ -19,14 +41,26 @@ export function TrendingSection({
 			headers: { Authorization: `Bearer ${API_KEY}` },
 		});
 		if (!response.ok) throw new Error("Failed to fetch movies");
-		return response.json() as Promise<MovieResponse>;
+		return response.json() as Promise<{ results: TrendingItem[] }>;
 	};
 
-	const { data: trendingMovies, isLoading: isLoadingTrending } = useQuery({
-		queryKey: ["trending", trendingPeriod],
+	const { data: trendingMovies, isLoading: isLoadingMovies } = useQuery({
+		queryKey: ["trending-movies", trendingPeriod],
 		queryFn: () =>
 			fetchMovies(`${TMDB_API_BASE}/trending/movie/${trendingPeriod}`),
 	});
+
+	const { data: trendingTV, isLoading: isLoadingTV } = useQuery({
+		queryKey: ["trending-tv", trendingPeriod],
+		queryFn: () =>
+			fetchMovies(`${TMDB_API_BASE}/trending/tv/${trendingPeriod}`),
+	});
+
+	const isLoadingTrending = isLoadingMovies || isLoadingTV;
+	const combined: TrendingItem[] = [
+		...(trendingMovies?.results || []),
+		...(trendingTV?.results || []),
+	];
 
 	return (
 		<section className="mb-12">
@@ -61,29 +95,34 @@ export function TrendingSection({
 				</div>
 			) : (
 				<div className="flex overflow-x-auto gap-6 pb-2 hide-scrollbar">
-					{trendingMovies?.results.map((movie: any) => (
-						<div
-							key={movie.id}
+					{combined.map((item) => (
+						<Link
+							key={item.id}
+							href={`/details/${isTV(item) ? "tv" : "movie"}/${
+								item.id
+							}`}
 							className="relative min-w-[180px] flex-shrink-0"
 						>
 							<img
-								src={getImageUrl(movie.poster_path)}
-								alt={movie.title}
+								src={getImageUrl(item.poster_path || "")}
+								alt={isTV(item) ? item.name : item.title}
 								className="rounded-lg shadow-lg w-full h-[270px] object-cover"
 							/>
 							<div className="absolute left-1 bottom-10">
 								<CircularRating
-									value={movie.vote_average * 10}
+									value={item.vote_average * 10}
 									size={40}
 								/>
 							</div>
 							<div className="mt-6 font-semibold truncate w-[170px]">
-								{movie.title}
+								{isTV(item) ? item.name : item.title}
 							</div>
 							<div className="text-xs text-gray-400">
-								{movie.release_date}
+								{isTV(item)
+									? item.first_air_date
+									: item.release_date}
 							</div>
-						</div>
+						</Link>
 					))}
 				</div>
 			)}

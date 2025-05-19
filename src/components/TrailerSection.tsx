@@ -1,6 +1,7 @@
 import { getImageUrl, MovieResponse } from "@/lib/tmdb";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 const trailerFilters = ["Popular", "Streaming", "On TV", "In Theatres"];
 
@@ -10,7 +11,6 @@ const filterToEndpoint = (filter: string) => {
 		case "Popular":
 			return `${API_BASE}/movie/popular`;
 		case "Streaming":
-			// Netflix (8) as example, US region
 			return `${API_BASE}/discover/movie?with_watch_providers=8&watch_region=US`;
 		case "On TV":
 			return `${API_BASE}/discover/tv?language=en-US&page=1&sort_by=first_air_date.desc&watch_region=US&with_watch_providers=8`;
@@ -115,21 +115,29 @@ export function TrailerSection() {
 							key={item.id}
 							className="relative min-w-[300px] max-w-[300px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-900"
 						>
-							<img
-								src={getImageUrl(
-									item.backdrop_path || item.poster_path,
-									"w500"
-								)}
-								alt={item.name || item.title}
-								className="w-full h-[170px] object-cover"
-							/>
+							<Link
+								href={`/details/${
+									trailerFilter === "On TV" ? "tv" : "movie"
+								}/${item.id}`}
+								className="block"
+							>
+								<img
+									src={getImageUrl(
+										item.backdrop_path || item.poster_path,
+										"w500"
+									)}
+									alt={item.name || item.title || ""}
+									className="w-full h-[170px] object-cover"
+								/>
+							</Link>
 							{trailers[item.id] && (
 								<button
 									className="absolute inset-0 flex items-center justify-center"
 									onClick={() =>
 										setModalTrailer({
 											key: trailers[item.id]!,
-											title: item.name || item.title,
+											title:
+												item.name || item.title || "",
 										})
 									}
 								>
@@ -149,9 +157,16 @@ export function TrailerSection() {
 								</button>
 							)}
 							<div className="p-3 text-center">
-								<div className="font-bold text-white text-lg">
-									{item.name || item.title}
-								</div>
+								<Link
+									href={`/details/${
+										trailerFilter === "On TV"
+											? "tv"
+											: "movie"
+									}/${item.id}`}
+									className="font-bold text-white text-lg block hover:underline"
+								>
+									{item.name || item.title || ""}
+								</Link>
 								<div className="text-gray-300 text-sm truncate">
 									{item.overview}
 								</div>
