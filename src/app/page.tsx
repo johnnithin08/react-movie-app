@@ -1,52 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "react-use";
-
+import { useState } from "react";
 import { MovieCard } from "@/components/MovieCard";
 import { Search } from "@/components/Search";
 import { Spinner } from "@/components/Spinner";
+import { tmdbEndpoints, getImageUrl, type MovieResponse } from "@/lib/tmdb";
+import { CircularRating } from "@/components/CircularRating";
+import { TrendingSection } from "@/components/TrendingSection";
+import { TrailerSection } from "@/components/TrailerSection";
 
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-const API_BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_API_BASE = "https://api.themoviedb.org/3";
 
-const App = () => {
-	const [searchTerm, setSearchTerm] = useState<string>("");
-	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+const fetchMovies = async (endpoint: string) => {
+	const response = await fetch(endpoint, {
+		headers: { Authorization: `Bearer ${API_KEY}` },
+	});
+	if (!response.ok) throw new Error("Failed to fetch movies");
+	return response.json() as Promise<MovieResponse>;
+};
+
+export default function Home() {
+	const [searchTerm, setSearchTerm] = useState("");
+	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+	const [trendingPeriod, setTrendingPeriod] = useState<"day" | "week">("day");
 
 	useDebounce(() => setDebouncedSearchTerm(searchTerm), 300, [searchTerm]);
 
-	const { data, isFetching, error, refetch } = useQuery<IMovieResponse>({
-		queryKey: ["movies"],
-		queryFn: async () => {
-			const endpoint = debouncedSearchTerm
-				? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(
-						debouncedSearchTerm
-				  )}`
-				: `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
-			console.log("sea", searchTerm, endpoint);
-			const response = await fetch(endpoint, {
-				method: "GET",
-				headers: { Authorization: `Bearer ${API_KEY}` },
-			});
-			const responseJson = await response.json();
-			console.log("resp", responseJson);
-			return responseJson;
-		},
+	const { data: popularMovies, isLoading: isLoadingPopular } = useQuery({
+		queryKey: ["popular"],
+		queryFn: () => fetchMovies(tmdbEndpoints.popular),
 	});
 
-	useEffect(() => {
-		refetch();
-	}, [debouncedSearchTerm]);
+	const { data: searchResults, isLoading: isLoadingSearch } = useQuery({
+		queryKey: ["search", debouncedSearchTerm],
+		queryFn: () => fetchMovies(tmdbEndpoints.search(debouncedSearchTerm)),
+		enabled: debouncedSearchTerm.length > 0,
+	});
 
 	return (
-		<main>
+		<main className="min-h-screen bg-gray-900 text-white">
 			<div className="pattern">
-				<div className="wrapper">
-					<header>
-						<img src="./hero.png" alt="hero Banner" />
-						<h1>
+				<div className="wrapper max-w-7xl mx-auto px-4 py-8">
+					<header className="text-center mb-4">
+						<img
+							src="./hero.png"
+							alt="hero Banner"
+							className="mx-auto"
+						/>
+						<h1 className="text-4xl font-bold mb-4">
 							Find <span className="text-gradient">Movies</span>{" "}
 							You&apos;ll Enjoy Without the Hassle
 						</h1>
@@ -54,48 +58,55 @@ const App = () => {
 							searchTerm={searchTerm}
 							setSearchTerm={setSearchTerm}
 						/>
+						<div className="mt-4" />
 					</header>
-					<section className="trending">
-						<h2>Trending Movies</h2>
-						<ul>
-							{data &&
-								data.results.map((eachMovie, eachindex) => {
-									return (
-										<li key={eachMovie.id}>
-											<p>{eachindex + 1}</p>
-											<img
-												src={`https://image.tmdb.org/t/p/w500/${eachMovie.poster_path}`}
-												alt={eachMovie.title}
-											/>
-										</li>
-									);
-								})}
-						</ul>
-					</section>
-					<section className="all-movies">
-						<h2 className="mt-[40px]">All Movies</h2>
-						{isFetching ? (
-							<Spinner />
-						) : error ? (
-							<p className="text-red-500">{error.message}</p>
-						) : (
-							<ul>
-								{data &&
-									data.results.map((eachMovie) => {
-										return (
+
+					{debouncedSearchTerm ? (
+						<section className="mb-12">
+							<h2 className="text-2xl font-bold mb-6">
+								Search Results
+							</h2>
+							{isLoadingSearch ? (
+								<Spinner />
+							) : (
+								<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+									{searchResults?.results.map((movie) => (
+										<MovieCard
+											key={movie.id}
+											movie={movie}
+										/>
+									))}
+								</div>
+							)}
+						</section>
+					) : (
+						<>
+							<TrendingSection
+								trendingPeriod={trendingPeriod}
+								setTrendingPeriod={setTrendingPeriod}
+							/>
+							<TrailerSection />
+							<section className="mb-12">
+								<h2 className="text-2xl font-bold mb-6">
+									Popular Movies
+								</h2>
+								{isLoadingPopular ? (
+									<Spinner />
+								) : (
+									<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+										{popularMovies?.results.map((movie) => (
 											<MovieCard
-												key={eachMovie.id}
-												movie={eachMovie}
+												key={movie.id}
+												movie={movie}
 											/>
-										);
-									})}
-							</ul>
-						)}
-					</section>
+										))}
+									</div>
+								)}
+							</section>
+						</>
+					)}
 				</div>
 			</div>
 		</main>
 	);
-};
-
-export default App;
+}
