@@ -1,7 +1,8 @@
-import { getImageUrl, MovieResponse } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { Spinner } from "@/components/Spinner";
 
 const trailerFilters = ["Popular", "Streaming", "On TV", "In Theatres"];
 
@@ -26,7 +27,7 @@ const fetchMovies = async (endpoint: string, apiKey: string) => {
 		headers: { Authorization: `Bearer ${apiKey}` },
 	});
 	if (!response.ok) throw new Error("Failed to fetch movies");
-	return response.json() as Promise<MovieResponse>;
+	return response.json() as Promise<DiscoverResponse>;
 };
 
 const fetchTrailer = async (movieId: number, apiKey: string, isTV: boolean) => {
@@ -55,7 +56,7 @@ export function TrailerSection() {
 	const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 
 	const endpoint = filterToEndpoint(trailerFilter);
-	const { data: moviesData, isLoading } = useQuery({
+	const { data: moviesData, isLoading } = useQuery<DiscoverResponse>({
 		queryKey: ["trailers", trailerFilter],
 		queryFn: () => fetchMovies(endpoint, API_KEY!),
 	});
@@ -106,7 +107,7 @@ export function TrailerSection() {
 			</div>
 			{isLoading ? (
 				<div className="flex justify-center items-center h-32 w-full">
-					<span>Loading...</span>
+					<Spinner />
 				</div>
 			) : (
 				<div className="flex overflow-x-auto gap-6 pb-2 hide-scrollbar">
@@ -123,7 +124,9 @@ export function TrailerSection() {
 							>
 								<img
 									src={getImageUrl(
-										item.backdrop_path || item.poster_path,
+										item.backdrop_path ||
+											item.poster_path ||
+											"",
 										"w500"
 									)}
 									alt={item.name || item.title || ""}

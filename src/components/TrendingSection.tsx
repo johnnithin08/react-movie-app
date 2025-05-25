@@ -2,6 +2,7 @@ import { CircularRating } from "@/components/CircularRating";
 import { getImageUrl } from "@/lib/tmdb";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { Spinner } from "@/components/Spinner";
 
 interface TrendingSectionProps {
 	trendingPeriod: "day" | "week";
@@ -91,7 +92,7 @@ export function TrendingSection({
 			</div>
 			{isLoadingTrending ? (
 				<div className="flex justify-center items-center h-32 w-full">
-					<span>Loading...</span>
+					<Spinner />
 				</div>
 			) : (
 				<div className="flex overflow-x-auto gap-6 pb-2 hide-scrollbar">
