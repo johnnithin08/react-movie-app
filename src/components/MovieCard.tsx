@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react'
 
 interface IMovieCardProps {
-  movie: IMovie
+  movie: DiscoverItem
 }
 
 export const MovieCard: FunctionComponent<IMovieCardProps> = ({
