@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { CircularRating } from "./CircularRating";
 import { getImageUrl } from "@/lib/tmdb";
 import { Movie, TV } from '@/lib/tmdb';
@@ -24,11 +25,16 @@ export const MovieCard: FunctionComponent<IMovieCardProps> = ({
 			href={`/details/${isTV(item) ? "tv" : "movie"}/${item.id}`}
 			className="relative min-w-[180px] flex-shrink-0 cursor-pointer hover:opacity-80 transition"
 		>
-			<img
-				src={poster_path ? getImageUrl(poster_path) : "/no-movie.png"}
-				alt={title}
-				className="rounded-lg shadow-lg h-[270px] object-cover"
-			/>
+			<div className="relative h-[270px] aspect-[0.7]">
+				<Image
+					src={poster_path ? getImageUrl(poster_path) : "/no-movie.png"}
+					alt={title}
+					fill
+					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+					className="rounded-lg shadow-lg object-cover"
+					priority={false}
+				/>
+			</div>
 			<div className="absolute left-1 bottom-10">
 				<CircularRating value={vote_average * 10} size={40} />
 			</div>

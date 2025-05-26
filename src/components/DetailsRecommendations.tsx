@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { getImageUrl } from "@/lib/tmdb";
 import { CircularRating } from "./CircularRating";
 
@@ -15,12 +16,17 @@ export function DetailsRecommendations({ recs }: { recs: Recommendation[] }) {
 						className="flex flex-col items-center min-w-[160px] hover:opacity-80 transition cursor-pointer relative"
 						style={{ textDecoration: "none", color: "inherit" }}
 					>
-						<img
-							src={getImageUrl(rec.poster_path || "")}
-							alt={rec.title || rec.name}
-							className="rounded-lg w-[120px] aspect-[0.7] object-cover mb-2"
-						/>
-						<div className="absolute left-2 bottom-15">
+						<div className="relative w-[120px] aspect-[0.7] mb-2">
+							<Image
+								src={getImageUrl(rec.poster_path || "")}
+								alt={rec.title || rec.name || ""}
+								fill
+								sizes="96px"
+								className="rounded-lg object-cover"
+								priority={false}
+							/>
+						</div>
+						<div className="absolute left-1 bottom-10">
 							<CircularRating
 								value={rec.vote_average * 10}
 								size={40}

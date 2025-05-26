@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Spinner } from "@/components/Spinner";
 import { getImageUrl } from "@/lib/tmdb";
 
@@ -25,11 +26,16 @@ export function DetailsCast({
 							className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition cursor-pointer"
 							style={{ textDecoration: "none", color: "inherit" }}
 						>
-							<img
-								src={getImageUrl(actor.profile_path || "")}
-								alt={actor.name}
-								className="rounded-lg w-[96px] h-[120px] object-cover mb-2"
-							/>
+							<div className="relative w-[96px] h-[120px] mb-2">
+								<Image
+									src={getImageUrl(actor.profile_path || "")}
+									alt={actor.name}
+									fill
+									sizes="96px"
+									className="rounded-lg object-cover"
+									priority={false}
+								/>
+							</div>
 							<div className="font-semibold text-sm text-center">
 								{actor.name}
 							</div>

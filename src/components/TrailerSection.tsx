@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Spinner } from "@/components/Spinner";
+import Image from "next/image";
 
 const trailerFilters = ["Popular", "Streaming", "On TV", "In Theatres"];
 
@@ -120,17 +121,19 @@ export function TrailerSection() {
 								href={`/details/${
 									trailerFilter === "On TV" ? "tv" : "movie"
 								}/${item.id}`}
-								className="block"
+								className="block relative h-[170px]"
 							>
-								<img
+								<Image
 									src={getImageUrl(
 										item.backdrop_path ||
 											item.poster_path ||
-											"",
-										"w500"
+											""
 									)}
 									alt={item.name || item.title || ""}
-									className="w-full h-[170px] object-cover"
+									fill
+									sizes="300px"
+									className="object-cover"
+									priority={false}
 								/>
 							</Link>
 							{trailers[item.id] && (
@@ -176,6 +179,46 @@ export function TrailerSection() {
 							</div>
 						</div>
 					))}
+				</div>
+			)}
+
+			{modalTrailer && (
+				<div
+					className="fixed inset-0 backdrop-blur-sm bg-black/60 z-50 flex items-center justify-center p-4"
+					onClick={() => setModalTrailer(null)}
+				>
+					<div
+						className="relative w-full max-w-4xl aspect-video"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<iframe
+							width="100%"
+							height="100%"
+							src={`https://www.youtube.com/embed/${modalTrailer.key}?autoplay=1`}
+							title={modalTrailer.title}
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowFullScreen
+							className="rounded-lg"
+						/>
+						<button
+							className="absolute -top-4 -right-4 bg-white rounded-full p-2 text-black hover:bg-gray-200"
+							onClick={() => setModalTrailer(null)}
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+							>
+								<path
+									d="M18 6L6 18M6 6l12 12"
+									strokeWidth="2"
+									strokeLinecap="round"
+								/>
+							</svg>
+						</button>
+					</div>
 				</div>
 			)}
 		</section>

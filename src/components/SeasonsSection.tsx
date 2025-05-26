@@ -4,6 +4,7 @@ import { CircularRating } from "./CircularRating";
 import { getImageUrl } from "@/lib/tmdb";
 import { Spinner } from "./Spinner";
 import { CustomDropdown } from "./CustomDropdown";
+import Image from "next/image";
 
 const API_BASE = "https://api.themoviedb.org/3";
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
@@ -137,13 +138,24 @@ export function SeasonsSection({ showId, seasons }: SeasonsSectionProps) {
 							)
 						}
 					>
-						{episode.still_path && (
-							<img
-								src={getImageUrl(episode.still_path, "w500")}
-								alt={episode.name}
-								className="w-[200px] h-[112px] object-cover rounded-lg"
-							/>
-						)}
+						<div className="relative aspect-video w-full md:w-64 flex-shrink-0">
+							{episode.still_path ? (
+								<Image
+									src={getImageUrl(episode.still_path)}
+									alt={episode.name}
+									fill
+									sizes="(max-width: 768px) 100vw, 256px"
+									className="object-cover rounded-lg"
+									priority={false}
+								/>
+							) : (
+								<div className="w-full h-full bg-gray-800 rounded-lg flex items-center justify-center">
+									<span className="text-gray-400 text-sm">
+										No image
+									</span>
+								</div>
+							)}
+						</div>
 						<div className="flex-1">
 							<div className="flex items-start justify-between">
 								<div>
