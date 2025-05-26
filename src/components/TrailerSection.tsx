@@ -114,7 +114,7 @@ export function TrailerSection() {
 					{moviesData?.results.slice(0, 4).map((item) => (
 						<div
 							key={item.id}
-							className="relative min-w-[300px] max-w-[300px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-900"
+							className="relative min-w-[300px] max-w-[300px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-900 cursor-pointer hover:opacity-80 transition"
 						>
 							<Link
 								href={`/details/${
@@ -176,43 +176,6 @@ export function TrailerSection() {
 							</div>
 						</div>
 					))}
-				</div>
-			)}
-			{/* Modal for YouTube player */}
-			{modalTrailer && (
-				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
-					onClick={() => setModalTrailer(null)}
-				>
-					<div
-						className="bg-[#181818] rounded-lg overflow-hidden relative w-full max-w-5xl"
-						onClick={(e) => e.stopPropagation()}
-					>
-						{/* Title Bar */}
-						<div className="flex items-center justify-between px-4 py-2 bg-[#222] border-b border-gray-700">
-							<span className="text-white font-medium text-base truncate">
-								{modalTrailer.title}
-							</span>
-							<button
-								className="text-white text-2xl"
-								onClick={() => setModalTrailer(null)}
-							>
-								&times;
-							</button>
-						</div>
-						{/* Video */}
-						<div className="w-full aspect-video bg-black flex items-center justify-center">
-							<iframe
-								width="100%"
-								height="100%"
-								src={`https://www.youtube.com/embed/${modalTrailer.key}`}
-								title={modalTrailer.title}
-								frameBorder="0"
-								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-								allowFullScreen
-							></iframe>
-						</div>
-					</div>
 				</div>
 			)}
 		</section>

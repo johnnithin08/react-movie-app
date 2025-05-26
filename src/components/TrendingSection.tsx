@@ -102,7 +102,7 @@ export function TrendingSection({
 							href={`/details/${isTV(item) ? "tv" : "movie"}/${
 								item.id
 							}`}
-							className="relative min-w-[180px] flex-shrink-0"
+							className="relative min-w-[180px] flex-shrink-0 cursor-pointer hover:opacity-80 transition"
 						>
 							<img
 								src={getImageUrl(item.poster_path || "")}

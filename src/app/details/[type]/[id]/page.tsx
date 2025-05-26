@@ -7,6 +7,7 @@ import { MediaTabs } from "@/components/MediaTabs";
 import { DetailsHeader } from "@/components/DetailsHeader";
 import { DetailsCast } from "@/components/DetailsCast";
 import { DetailsRecommendations } from "@/components/DetailsRecommendations";
+import { SeasonsSection } from "@/components/SeasonsSection";
 
 const API_BASE = "https://api.themoviedb.org/3";
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
@@ -179,6 +180,12 @@ export default function DetailsPage() {
 				/>
 				{/* <DetailsFacts facts={facts} companies={companies} /> */}
 				<DetailsCast cast={cast} loadingCredits={loadingCredits} />
+				{type === "tv" && details.seasons && (
+					<SeasonsSection
+						showId={details.id}
+						seasons={details.seasons}
+					/>
+				)}
 				{/* Media Section */}
 				<div className="w-full max-w-6xl mt-12">
 					<h2 className="text-2xl font-bold mb-4">Media</h2>

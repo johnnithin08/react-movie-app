@@ -116,7 +116,15 @@ declare interface Details {
 	number_of_seasons?: number;
 	origin_country?: string[];
 	original_name?: string;
-	seasons?: Season[];
+	seasons?: {
+		id: number;
+		name: string;
+		overview: string;
+		air_date: string;
+		episode_count: number;
+		season_number: number;
+		poster_path: string | null;
+	}[];
 	type?: string;
 }
 

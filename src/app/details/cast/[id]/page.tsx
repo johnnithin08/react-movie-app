@@ -127,7 +127,7 @@ export default function CastDetailsPage() {
 								<a
 									href={`/details/${work.media_type}/${work.id}`}
 									key={work.id}
-									className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition"
+									className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition cursor-pointer"
 									style={{
 										textDecoration: "none",
 										color: "inherit",

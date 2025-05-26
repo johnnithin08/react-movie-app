@@ -16,6 +16,7 @@ export interface Movie {
 	video: boolean;
 	vote_average: number;
 	vote_count: number;
+	media_type: "movie";
 }
 
 export interface MovieResponse {
@@ -25,18 +26,55 @@ export interface MovieResponse {
 	total_results: number;
 }
 
+export interface TV {
+	id: number;
+	backdrop_path: string;
+	genre_ids: number[];
+	original_language: string;
+	original_name: string;
+	overview: string;
+	popularity: number;
+	poster_path: string;
+	first_air_date: string;
+	name: string;
+	vote_average: number;
+	vote_count: number;
+	origin_country: string[];
+	media_type: "tv";
+}
+
+export interface TVResponse {
+	page: number;
+	results: TV[];
+	total_pages: number;
+	total_results: number;
+}
+
+export interface MultiSearchResponse {
+	page: number;
+	results: (Movie | TV)[];
+	total_pages: number;
+	total_results: number;
+}
+
 export const tmdbEndpoints = {
-	trending: `${TMDB_API_BASE}/trending/movie/day`,
-	popular: `${TMDB_API_BASE}/movie/popular`,
+	trending: `${TMDB_API_BASE}/trending/all/day`,
+	popularMovies: `${TMDB_API_BASE}/movie/popular`,
+	popularTV: `${TMDB_API_BASE}/tv/popular`,
 	upcoming: `${TMDB_API_BASE}/movie/upcoming`,
 	nowPlaying: `${TMDB_API_BASE}/movie/now_playing`,
-	topRated: `${TMDB_API_BASE}/movie/top_rated`,
+	topRatedMovies: `${TMDB_API_BASE}/movie/top_rated`,
+	topRatedTV: `${TMDB_API_BASE}/tv/top_rated`,
 	search: (query: string) =>
-		`${TMDB_API_BASE}/search/movie?query=${encodeURIComponent(query)}`,
+		`${TMDB_API_BASE}/search/multi?query=${encodeURIComponent(query)}`,
 	movie: (id: number) => `${TMDB_API_BASE}/movie/${id}`,
+	tv: (id: number) => `${TMDB_API_BASE}/tv/${id}`,
 	movieCredits: (id: number) => `${TMDB_API_BASE}/movie/${id}/credits`,
+	tvCredits: (id: number) => `${TMDB_API_BASE}/tv/${id}/credits`,
 	movieVideos: (id: number) => `${TMDB_API_BASE}/movie/${id}/videos`,
+	tvVideos: (id: number) => `${TMDB_API_BASE}/tv/${id}/videos`,
 	movieSimilar: (id: number) => `${TMDB_API_BASE}/movie/${id}/similar`,
+	tvSimilar: (id: number) => `${TMDB_API_BASE}/tv/${id}/similar`,
 };
 
 export const getImageUrl = (

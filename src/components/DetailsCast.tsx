@@ -22,7 +22,7 @@ export function DetailsCast({
 						<a
 							href={`/details/cast/${actor.id}`}
 							key={actor.id}
-							className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition"
+							className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition cursor-pointer"
 							style={{ textDecoration: "none", color: "inherit" }}
 						>
 							<img
