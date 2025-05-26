@@ -1,4 +1,5 @@
 import { getImageUrl } from "@/lib/tmdb";
+import Image from "next/image";
 import { CircularRating } from "@/components/CircularRating";
 import { DetailsFacts } from "@/components/DetailsFacts";
 import React from "react";
@@ -51,12 +52,17 @@ export function DetailsHeader({
 				</>
 			)}
 			<div className="relative z-10 flex flex-col md:flex-row gap-8 w-full p-5">
-				<div className="flex flex-col items-center justify-center min-w-[260px]">
-					<img
-						src={getImageUrl(details.poster_path || "")}
-						alt={details.title || details.name}
-						className="rounded-2xl w-[260px] h-[390px] object-cover shadow-lg"
-					/>
+				<div className="w-full md:w-64 flex-shrink-0">
+					<div className="relative w-full aspect-[2/3]">
+						<Image
+							src={getImageUrl(details.poster_path || "")}
+							alt={details.title || details.name || ""}
+							fill
+							sizes="(max-width: 768px) 100vw, 256px"
+							className="rounded-lg object-cover"
+							priority={true}
+						/>
+					</div>
 				</div>
 				<div className="flex-1 flex flex-col md:flex-row gap-8">
 					<div className="flex-1">

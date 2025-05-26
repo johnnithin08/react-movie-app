@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Spinner } from "@/components/Spinner";
+import Image from "next/image";
 
 const trailerFilters = ["Popular", "Streaming", "On TV", "In Theatres"];
 
@@ -114,23 +115,25 @@ export function TrailerSection() {
 					{moviesData?.results.slice(0, 4).map((item) => (
 						<div
 							key={item.id}
-							className="relative min-w-[300px] max-w-[300px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-900"
+							className="relative min-w-[300px] max-w-[300px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-900 cursor-pointer hover:opacity-80 transition"
 						>
 							<Link
 								href={`/details/${
 									trailerFilter === "On TV" ? "tv" : "movie"
 								}/${item.id}`}
-								className="block"
+								className="block relative h-[170px]"
 							>
-								<img
+								<Image
 									src={getImageUrl(
 										item.backdrop_path ||
 											item.poster_path ||
-											"",
-										"w500"
+											""
 									)}
 									alt={item.name || item.title || ""}
-									className="w-full h-[170px] object-cover"
+									fill
+									sizes="300px"
+									className="object-cover"
+									priority={false}
 								/>
 							</Link>
 							{trailers[item.id] && (
@@ -178,40 +181,43 @@ export function TrailerSection() {
 					))}
 				</div>
 			)}
-			{/* Modal for YouTube player */}
+
 			{modalTrailer && (
 				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+					className="fixed inset-0 backdrop-blur-sm bg-black/60 z-50 flex items-center justify-center p-4"
 					onClick={() => setModalTrailer(null)}
 				>
 					<div
-						className="bg-[#181818] rounded-lg overflow-hidden relative w-full max-w-5xl"
+						className="relative w-full max-w-4xl aspect-video"
 						onClick={(e) => e.stopPropagation()}
 					>
-						{/* Title Bar */}
-						<div className="flex items-center justify-between px-4 py-2 bg-[#222] border-b border-gray-700">
-							<span className="text-white font-medium text-base truncate">
-								{modalTrailer.title}
-							</span>
-							<button
-								className="text-white text-2xl"
-								onClick={() => setModalTrailer(null)}
+						<iframe
+							width="100%"
+							height="100%"
+							src={`https://www.youtube.com/embed/${modalTrailer.key}?autoplay=1`}
+							title={modalTrailer.title}
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowFullScreen
+							className="rounded-lg"
+						/>
+						<button
+							className="absolute -top-4 -right-4 bg-white rounded-full p-2 text-black hover:bg-gray-200"
+							onClick={() => setModalTrailer(null)}
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
 							>
-								&times;
-							</button>
-						</div>
-						{/* Video */}
-						<div className="w-full aspect-video bg-black flex items-center justify-center">
-							<iframe
-								width="100%"
-								height="100%"
-								src={`https://www.youtube.com/embed/${modalTrailer.key}`}
-								title={modalTrailer.title}
-								frameBorder="0"
-								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-								allowFullScreen
-							></iframe>
-						</div>
+								<path
+									d="M18 6L6 18M6 6l12 12"
+									strokeWidth="2"
+									strokeLinecap="round"
+								/>
+							</svg>
+						</button>
 					</div>
 				</div>
 			)}

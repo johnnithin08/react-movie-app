@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { getImageUrl } from "@/lib/tmdb";
 
 export function DetailsFacts({
@@ -33,11 +34,16 @@ export function DetailsFacts({
 								className="flex items-center gap-1"
 							>
 								{c.logo_path && (
-									<img
-										src={getImageUrl(c.logo_path)}
-										alt={c.name}
-										className="w-8 h-8 object-contain"
-									/>
+									<div className="relative w-8 h-8">
+										<Image
+											src={getImageUrl(c.logo_path)}
+											alt={c.name}
+											fill
+											sizes="32px"
+											className="object-contain"
+											priority={false}
+										/>
+									</div>
 								)}
 								<span className="text-xs text-gray-300">
 									{c.name}

@@ -1,5 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import { getImageUrl } from "@/lib/tmdb";
+import { CircularRating } from "./CircularRating";
 
 export function DetailsRecommendations({ recs }: { recs: Recommendation[] }) {
 	if (!recs.length) return null;
@@ -11,21 +13,27 @@ export function DetailsRecommendations({ recs }: { recs: Recommendation[] }) {
 					<a
 						href={`/details/${rec.media_type}/${rec.id}`}
 						key={rec.id}
-						className="flex flex-col items-center min-w-[120px] hover:opacity-80 transition"
+						className="flex flex-col items-center min-w-[160px] hover:opacity-80 transition cursor-pointer relative"
 						style={{ textDecoration: "none", color: "inherit" }}
 					>
-						<img
-							src={getImageUrl(rec.poster_path || "")}
-							alt={rec.title || rec.name}
-							className="rounded-lg w-[96px] h-[140px] object-cover mb-2"
-						/>
-						<div className="font-semibold text-sm text-center">
-							{rec.title || rec.name}
+						<div className="relative w-[120px] aspect-[0.7] mb-2">
+							<Image
+								src={getImageUrl(rec.poster_path || "")}
+								alt={rec.title || rec.name || ""}
+								fill
+								sizes="96px"
+								className="rounded-lg object-cover"
+								priority={false}
+							/>
 						</div>
-						<div className="text-xs text-gray-400 text-center">
-							{rec.vote_average
-								? `${Math.round(rec.vote_average * 10)}%`
-								: ""}
+						<div className="absolute left-1 bottom-10">
+							<CircularRating
+								value={rec.vote_average * 10}
+								size={40}
+							/>
+						</div>
+						<div className="font-semibold text-sm text-center mt-6">
+							{rec.title || rec.name}
 						</div>
 					</a>
 				))}

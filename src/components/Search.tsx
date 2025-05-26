@@ -15,7 +15,7 @@ export const Search: FunctionComponent<ISearchProps> = ({
 				<img src="search.svg" alt="search" />
 				<input
 					type="text"
-					placeholder="Search through thousands of movies"
+					placeholder="Search through thousands of movies and TV shows"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
